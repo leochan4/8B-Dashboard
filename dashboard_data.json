@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-05-09T20:17:00.227025",
+  "last_updated": "2026-05-11T11:20:49.535809",
   "net_liquidation": null,
   "current_position": {
     "has_position": false,
@@ -10,6 +10,60 @@
     "position_size": 0
   },
   "recent_trades": [
+    {
+      "trade_id": 6,
+      "symbol": "NVDA",
+      "direction": "LONG",
+      "entry_type": "long1",
+      "exit_type": "TP",
+      "entry_date": "2026-05-11",
+      "entry_time": "09:35:12",
+      "exit_date": "2026-05-11",
+      "exit_time": "09:40:12",
+      "entry_price": 215.3247,
+      "exit_price": 217.3363,
+      "quantity": 2379,
+      "gross_pnl": 4785.59,
+      "commissions": 23.0171,
+      "net_pnl": 4762.5729,
+      "hold_duration": "0:05:00.276585"
+    },
+    {
+      "trade_id": 5,
+      "symbol": "NVDA",
+      "direction": "SHORT",
+      "entry_type": "short2",
+      "exit_type": "Signal",
+      "entry_date": "2026-05-11",
+      "entry_time": "06:36:04",
+      "exit_date": "2026-05-11",
+      "exit_time": "09:25:21",
+      "entry_price": 213.156,
+      "exit_price": 213.7668,
+      "quantity": 2408,
+      "gross_pnl": -1470.73,
+      "commissions": 11.4065,
+      "net_pnl": -1482.1365,
+      "hold_duration": "2:49:17.416526"
+    },
+    {
+      "trade_id": 4,
+      "symbol": "NVDA",
+      "direction": "LONG",
+      "entry_type": "long1",
+      "exit_type": "Signal",
+      "entry_date": "2026-05-11",
+      "entry_time": "06:20:17",
+      "exit_date": "2026-05-11",
+      "exit_time": "06:35:29",
+      "entry_price": 213.7821,
+      "exit_price": 213.1424,
+      "quantity": 2408,
+      "gross_pnl": -1540.49,
+      "commissions": 23.0897,
+      "net_pnl": -1563.5797,
+      "hold_duration": "0:15:11.863162"
+    },
     {
       "trade_id": 3,
       "symbol": "NVDA",
@@ -45,37 +99,19 @@
       "commissions": 19.6457,
       "net_pnl": 2725.5543,
       "hold_duration": "0:49:49.365481"
-    },
-    {
-      "trade_id": 1,
-      "symbol": "NVDA",
-      "direction": "LONG",
-      "entry_type": "long1",
-      "exit_type": "TP",
-      "entry_date": "2026-05-07",
-      "entry_time": "19:30:13",
-      "exit_date": "2026-05-08",
-      "exit_time": "04:01:16",
-      "entry_price": 211.0,
-      "exit_price": 213.0,
-      "quantity": 2419,
-      "gross_pnl": 4838.0,
-      "commissions": 23.1881,
-      "net_pnl": 4814.8119,
-      "hold_duration": "8:31:02.906571"
     }
   ],
   "stats": {
-    "total_trades": 3,
-    "wins": 2,
-    "losses": 1,
-    "win_rate": 66.66666666666666,
-    "total_net_pnl": 6222.104799999999,
-    "avg_win": 3770.1830999999997,
-    "avg_loss": -1318.2614,
-    "profit_factor": 5.719932480765953,
+    "total_trades": 6,
+    "wins": 3,
+    "losses": 3,
+    "win_rate": 50.0,
+    "total_net_pnl": 7938.961499999999,
+    "avg_win": 4100.9797,
+    "avg_loss": -1454.6592,
+    "profit_factor": 2.819203082068982,
     "pnl_as_pct_equity": 0.0,
     "best_trade": 4814.8119,
-    "worst_trade": -1318.2614
+    "worst_trade": -1563.5797
   }
 }
