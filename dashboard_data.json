@@ -1,13 +1,13 @@
 {
-  "last_updated": "2026-05-13T13:35:12.550642",
+  "last_updated": "2026-05-13T15:05:12.676628",
   "net_liquidation": null,
   "current_position": {
-    "has_position": false,
-    "direction": null,
-    "entry_type": null,
-    "entry_price": null,
-    "entry_time": null,
-    "position_size": 0
+    "has_position": true,
+    "direction": "SHORT",
+    "entry_type": "short1",
+    "entry_price": 226.3425641025641,
+    "entry_time": "2026-05-13T15:05:12.676628-04:00",
+    "position_size": 2301
   },
   "recent_trades": [
     {
