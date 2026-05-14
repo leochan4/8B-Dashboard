@@ -1,15 +1,33 @@
 {
-  "last_updated": "2026-05-14T08:00:21.526421",
+  "last_updated": "2026-05-14T08:05:15.594477",
   "net_liquidation": null,
   "current_position": {
-    "has_position": true,
-    "direction": "LONG",
-    "entry_type": "long2",
-    "entry_price": 230.07325221238938,
-    "entry_time": "2026-05-14T08:00:21.526421-04:00",
-    "position_size": 2260
+    "has_position": false,
+    "direction": null,
+    "entry_type": null,
+    "entry_price": null,
+    "entry_time": null,
+    "position_size": 0
   },
   "recent_trades": [
+    {
+      "trade_id": 18,
+      "symbol": "NVDA",
+      "direction": "LONG",
+      "entry_type": "long2",
+      "exit_type": "TP",
+      "entry_date": "2026-05-14",
+      "entry_time": "08:00:21",
+      "exit_date": "2026-05-14",
+      "exit_time": "08:05:15",
+      "entry_price": 230.0733,
+      "exit_price": 230.4542,
+      "quantity": 2260,
+      "gross_pnl": 860.86,
+      "commissions": 18.2994,
+      "net_pnl": 842.5606,
+      "hold_duration": "0:04:54.066048"
+    },
     {
       "trade_id": 17,
       "symbol": "NVDA",
@@ -81,35 +99,17 @@
       "commissions": 22.8996,
       "net_pnl": 11087.4404,
       "hold_duration": "9:29:44.994635"
-    },
-    {
-      "trade_id": 13,
-      "symbol": "NVDA",
-      "direction": "SHORT",
-      "entry_type": "short1",
-      "exit_type": "Signal",
-      "entry_date": "2026-05-12",
-      "entry_time": "16:20:49",
-      "exit_date": "2026-05-12",
-      "exit_time": "18:35:19",
-      "entry_price": 220.1077,
-      "exit_price": 220.2,
-      "quantity": 2329,
-      "gross_pnl": -215.07,
-      "commissions": 11.652,
-      "net_pnl": -226.722,
-      "hold_duration": "2:14:29.857723"
     }
   ],
   "stats": {
-    "total_trades": 17,
-    "wins": 9,
+    "total_trades": 18,
+    "wins": 10,
     "losses": 8,
-    "win_rate": 52.94117647058824,
-    "total_net_pnl": 14522.6673,
-    "avg_win": 2888.390211111111,
+    "win_rate": 55.55555555555556,
+    "total_net_pnl": 15365.2279,
+    "avg_win": 2683.80725,
     "avg_loss": -1434.105575,
-    "profit_factor": 2.2658296879572477,
+    "profit_factor": 2.339269242782213,
     "pnl_as_pct_equity": 0.0,
     "best_trade": 11087.4404,
     "worst_trade": -3397.6627
