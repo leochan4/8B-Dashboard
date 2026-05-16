@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-05-15T19:45:30.976431",
+  "last_updated": "2026-05-16T16:51:02.332422",
   "net_liquidation": null,
   "current_position": {
     "has_position": true,
@@ -110,8 +110,11 @@
     "avg_win": 2273.8301,
     "avg_loss": -1566.9128,
     "profit_factor": 2.5798274302323794,
-    "pnl_as_pct_equity": 0.0,
+    "pnl_as_pct_equity": null,
     "best_trade": 11087.4404,
-    "worst_trade": -3397.6627
+    "worst_trade": -3397.6627,
+    "max_drawdown": -4429.745199999999,
+    "max_drawdown_pct": null,
+    "sharpe_ratio": 8.168193717061305
   }
 }
