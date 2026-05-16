@@ -294,7 +294,7 @@
 
         th {
             text-align: left;
-            padding: 12px 0;
+            padding: 12px 16px 12px 0;
             font-family: 'JetBrains Mono', monospace;
             font-size: 11px;
             font-weight: 500;
@@ -304,12 +304,17 @@
             border-bottom: 1px solid var(--hairline);
         }
 
+        th:last-child,
+        td:last-child {
+            padding-right: 0;
+        }
+
         th.right {
             text-align: right;
         }
 
         td {
-            padding: 16px 0;
+            padding: 16px 16px 16px 0;
             font-family: 'JetBrains Mono', monospace;
             font-size: 13px;
             color: var(--cream);
