@@ -526,7 +526,7 @@
             }
 
             renderPosition(data.current_position);
-            renderLiquidity(data.net_liquidation, data.stats.total_net_pnl, data.stats.pnl_as_pct_equity);
+            renderLiquidity(data.net_liquidation, data.stats.total_net_pnl, data.stats.pnl_as_pct_equity, data.currency || 'USD');
             renderPerformance(data.stats);
             renderTrades(data.recent_trades);
         }
@@ -572,11 +572,16 @@
                 '</div>';
         }
 
-        function renderLiquidity(netLiq, netPnl, pnlPct) {
+        function renderLiquidity(netLiq, netPnl, pnlPct, currency) {
             const liq = document.getElementById('liquidationContent');
-            liq.innerHTML = netLiq
-                ? '<div class="stat-value">' + fmtMoney(netLiq) + '</div>'
-                : '<div class="stat-value muted" style="color: var(--cream-55)">—</div>';
+            if (netLiq) {
+                const currencyLabel = currency && currency !== 'USD' ? ' ' + currency : '';
+                liq.innerHTML =
+                    '<div class="stat-value">' + fmtMoney(netLiq) + '</div>' +
+                    (currencyLabel ? '<div class="stat-subtext">' + currency + ' base currency</div>' : '');
+            } else {
+                liq.innerHTML = '<div class="stat-value muted" style="color: var(--cream-55)">—</div>';
+            }
 
             const pnl = document.getElementById('pnlContent');
             const pnlClass = netPnl >= 0 ? 'positive' : 'negative';
