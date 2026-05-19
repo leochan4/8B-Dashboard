@@ -411,6 +411,77 @@
             color: var(--cream-35);
             margin: 0 8px;
         }
+
+        /* Equity curve */
+        .equity-curve-card {
+            background-color: var(--onyx);
+            border: 1px solid var(--hairline);
+            border-radius: 6px;
+            padding: 24px;
+            margin-bottom: 16px;
+        }
+
+        .chart-meta {
+            display: flex;
+            gap: 24px;
+            margin-top: 12px;
+            margin-bottom: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 0.08em;
+            color: var(--cream-55);
+        }
+
+        .chart-meta-value {
+            color: var(--cream);
+            margin-left: 8px;
+        }
+
+        .chart-meta-value.positive { color: var(--positive); }
+        .chart-meta-value.negative { color: var(--negative); }
+
+        .equity-svg {
+            width: 100%;
+            height: 260px;
+            display: block;
+            overflow: visible;
+        }
+
+        .equity-axis-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.08em;
+            fill: var(--cream-55);
+        }
+
+        .equity-line {
+            fill: none;
+            stroke: var(--cream);
+            stroke-width: 1.25;
+            stroke-linejoin: round;
+            stroke-linecap: round;
+        }
+
+        .equity-area {
+            fill: rgba(244, 238, 228, 0.06);
+            stroke: none;
+        }
+
+        .equity-zero-line,
+        .equity-grid-line {
+            stroke: var(--hairline);
+            stroke-width: 1;
+        }
+
+        .equity-zero-line {
+            stroke-dasharray: 2 4;
+        }
+
+        .equity-marker {
+            fill: var(--cream);
+            stroke: var(--onyx);
+            stroke-width: 1.5;
+        }
     </style>
 </head>
 <body>
@@ -463,6 +534,13 @@
             <div class="performance">
                 <div class="eyebrow">Performance</div>
                 <div class="performance-grid" id="performanceContent"></div>
+            </div>
+
+            <!-- Equity curve -->
+            <div class="equity-curve-card">
+                <div class="eyebrow">Equity Curve</div>
+                <div class="chart-meta" id="chartMeta"></div>
+                <svg class="equity-svg" id="equityChart" preserveAspectRatio="none"></svg>
             </div>
 
             <!-- Recent trades -->
@@ -528,7 +606,97 @@
             renderPosition(data.current_position);
             renderLiquidity(data.net_liquidation, data.stats.total_net_pnl, data.stats.pnl_as_pct_equity, data.currency || 'USD');
             renderPerformance(data.stats);
+            renderEquityCurve(data.equity_curve || []);
             renderTrades(data.recent_trades);
+        }
+
+        function renderEquityCurve(curve) {
+            const svg = document.getElementById('equityChart');
+            const meta = document.getElementById('chartMeta');
+
+            if (!curve || curve.length < 2) {
+                svg.innerHTML = '';
+                meta.innerHTML = '<div>No trade history yet</div>';
+                return;
+            }
+
+            // Layout
+            const W = svg.clientWidth || 1000;
+            const H = 260;
+            const padL = 60, padR = 16, padT = 16, padB = 28;
+            const plotW = W - padL - padR;
+            const plotH = H - padT - padB;
+
+            svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+
+            // Data ranges
+            const n = curve.length;
+            const values = curve.map(p => p.cumulative_pnl);
+            const minV = Math.min(0, ...values);
+            const maxV = Math.max(0, ...values);
+            const range = (maxV - minV) || 1;
+
+            const xFor = i => padL + (plotW * i) / (n - 1);
+            const yFor = v => padT + plotH - ((v - minV) / range) * plotH;
+            const y0 = yFor(0);
+
+            // Build polyline points
+            const pts = curve.map((p, i) => `${xFor(i)},${yFor(p.cumulative_pnl)}`).join(' ');
+
+            // Build area path (line + close down to baseline)
+            const areaPts = `${xFor(0)},${y0} ` + pts + ` ${xFor(n-1)},${y0} Z`;
+
+            // Build axis ticks (y axis: 4 evenly spaced + 0)
+            const yTicks = [minV, minV + range * 0.25, minV + range * 0.5, minV + range * 0.75, maxV];
+            const yTickEls = yTicks.map(v => {
+                const y = yFor(v);
+                return `<line class="equity-grid-line" x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" opacity="0.5"/>
+                        <text class="equity-axis-text" x="${padL - 8}" y="${y + 3}" text-anchor="end">${fmtCompactMoney(v)}</text>`;
+            }).join('');
+
+            // X axis labels: first, middle, last trade IDs
+            const xTickIdxs = n <= 3
+                ? curve.map((_, i) => i)
+                : [0, Math.floor((n-1)/2), n-1];
+            const xTickEls = xTickIdxs.map(i => {
+                const x = xFor(i);
+                const label = curve[i].trade_id === 0 ? 'Start' : `#${curve[i].trade_id}`;
+                return `<text class="equity-axis-text" x="${x}" y="${H - 8}" text-anchor="middle">${label}</text>`;
+            }).join('');
+
+            // Marker on last point
+            const lastX = xFor(n - 1);
+            const lastY = yFor(values[n - 1]);
+
+            // Assemble SVG
+            svg.innerHTML = `
+                ${yTickEls}
+                <line class="equity-zero-line" x1="${padL}" y1="${y0}" x2="${W - padR}" y2="${y0}"/>
+                <path class="equity-area" d="M ${areaPts}"/>
+                <polyline class="equity-line" points="${pts}"/>
+                <circle class="equity-marker" cx="${lastX}" cy="${lastY}" r="3"/>
+                ${xTickEls}
+            `;
+
+            // Meta line above chart
+            const finalPnl = values[n - 1];
+            const pnlClass = finalPnl >= 0 ? 'positive' : 'negative';
+            const trades = n - 1;
+            const peak = Math.max(...values);
+            const trough = Math.min(...values);
+            meta.innerHTML = `
+                <div>Trades<span class="chart-meta-value">${trades}</span></div>
+                <div>Current<span class="chart-meta-value ${pnlClass}">${fmtMoney(finalPnl, {signed: true})}</span></div>
+                <div>Peak<span class="chart-meta-value positive">${fmtMoney(peak, {signed: true})}</span></div>
+                <div>Trough<span class="chart-meta-value ${trough < 0 ? 'negative' : ''}">${fmtMoney(trough, {signed: true})}</span></div>
+            `;
+        }
+
+        function fmtCompactMoney(n) {
+            const abs = Math.abs(n);
+            const sign = n < 0 ? '-' : '';
+            if (abs >= 1000) return sign + '$' + (abs / 1000).toFixed(1) + 'k';
+            return sign + '$' + abs.toFixed(0);
         }
 
         function renderPosition(p) {
@@ -656,6 +824,28 @@
                 '  <tbody>' + rows + '</tbody>' +
                 '</table>';
         }
+
+        let _lastData = null;
+        const _origFetch = fetchData;
+        fetchData = async function() {
+            await _origFetch();
+            // Capture data for resize re-render via global reference set in renderDashboard
+        };
+
+        // Cache latest data for resize re-rendering
+        const _origRender = renderDashboard;
+        renderDashboard = function(data) {
+            _lastData = data;
+            _origRender(data);
+        };
+
+        let _resizeTimer = null;
+        window.addEventListener('resize', () => {
+            clearTimeout(_resizeTimer);
+            _resizeTimer = setTimeout(() => {
+                if (_lastData) renderEquityCurve(_lastData.equity_curve || []);
+            }, 150);
+        });
 
         fetchData();
         setInterval(fetchData, REFRESH_INTERVAL);
