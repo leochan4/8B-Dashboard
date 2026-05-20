@@ -412,6 +412,126 @@
             margin: 0 8px;
         }
 
+        /* ──────────────────────────────────────────────────────────────────
+           Mobile responsiveness — applied at <= 720px (covers all phones)
+           ────────────────────────────────────────────────────────────────── */
+        @media (max-width: 720px) {
+            body {
+                padding: 20px 12px;
+            }
+
+            .container {
+                max-width: 100%;
+            }
+
+            /* Header — stack vertically on mobile */
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+                margin-bottom: 32px;
+                padding-bottom: 16px;
+            }
+
+            .header-left h1 {
+                font-size: 22px;
+            }
+
+            .header-right {
+                align-items: flex-start;
+            }
+
+            .header-meta-row {
+                gap: 8px;
+            }
+
+            /* Cards — tighter padding */
+            .card,
+            .performance,
+            .trades-table,
+            .equity-curve-card {
+                padding: 16px;
+            }
+
+            /* Top grid stacks at this width (overrides 900px rule below) */
+            .grid-top {
+                grid-template-columns: 1fr !important;
+                gap: 12px;
+                margin-bottom: 12px;
+            }
+
+            /* Smaller stat values */
+            .stat-value {
+                font-size: 22px;
+            }
+
+            .position-type {
+                font-size: 16px;
+            }
+
+            /* Performance grid — 2 columns on phones */
+            .performance-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+
+            .perf-value {
+                font-size: 14px;
+            }
+
+            /* Equity chart — shorter on mobile */
+            .equity-svg {
+                height: 180px;
+            }
+
+            .chart-meta {
+                flex-wrap: wrap;
+                gap: 12px;
+                font-size: 10px;
+            }
+
+            /* Trades table — horizontal scroll works, but shrink the text */
+            .trades-table {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            table {
+                font-size: 11px;
+                min-width: 560px;  /* lets table scroll horizontally inside its card */
+            }
+
+            th, td {
+                padding: 10px 8px 10px 0;
+                font-size: 11px;
+            }
+
+            /* Footer */
+            .footer {
+                margin-top: 40px;
+                font-size: 9px;
+            }
+        }
+
+        /* Even tighter for very small phones */
+        @media (max-width: 380px) {
+            body {
+                padding: 16px 8px;
+            }
+
+            .header-left h1 {
+                font-size: 20px;
+            }
+
+            .stat-value {
+                font-size: 20px;
+            }
+
+            .performance-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
         /* Equity curve */
         .equity-curve-card {
             background-color: var(--onyx);
