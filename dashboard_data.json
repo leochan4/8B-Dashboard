@@ -1,9 +1,9 @@
 {
-  "last_updated": "2026-05-31T17:22:14.679830",
+  "last_updated": "2026-06-01T04:01:10.157415",
   "strategy_version": "V9F",
-  "net_liquidation": 10002.34,
+  "net_liquidation": 10002.16,
   "currency": "CAD",
-  "fx_usd_to_base": 1.3795236028214943,
+  "fx_usd_to_base": 1.3814205100379966,
   "current_position": {
     "has_position": false,
     "direction": null,
