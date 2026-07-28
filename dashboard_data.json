@@ -1,19 +1,19 @@
 {
-  "last_updated": "2026-07-28T12:55:02.690058",
+  "last_updated": "2026-07-28T12:55:07.347067",
   "strategy_version": "V9F",
-  "net_liquidation": 10414.27,
+  "net_liquidation": 10413.08,
   "currency": "CAD",
-  "fx_usd_to_base": 1.4087119348053647,
+  "fx_usd_to_base": 1.4087120226089787,
   "current_position": {
-    "has_position": false,
-    "direction": null,
-    "entry_type": null,
-    "entry_price": null,
-    "entry_time": null,
-    "position_size": 0,
-    "entry_regime": null,
-    "entry_target": null,
-    "entry_atr_pct": null
+    "has_position": true,
+    "direction": "LONG",
+    "entry_type": "long2",
+    "entry_price": 198.06,
+    "entry_time": "2026-07-28T12:55:07.328070-04:00",
+    "position_size": 39,
+    "entry_regime": "high",
+    "entry_target": 0.14,
+    "entry_atr_pct": 0.31644291914807765
   },
   "recent_trades": [
     {
@@ -131,11 +131,11 @@
     "avg_win": 23.93732169811321,
     "avg_loss": -31.25323076923077,
     "profit_factor": 1.249030795585441,
-    "pnl_as_pct_equity": 6.843128455873416,
+    "pnl_as_pct_equity": 6.843910910710319,
     "best_trade": 201.2999,
     "worst_trade": -245.0801,
     "max_drawdown": -519.6018,
-    "max_drawdown_pct": -7.028521989600328,
+    "max_drawdown_pct": -7.02932564264623,
     "sharpe_ratio": 1.9506853361806253,
     "regime_breakdown": {
       "low": {
