@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Onyxquant — Trade Analytics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --onyx:#15110D; --cream:#F4EEE4; --iris:#AB96FF;
+  --cream-70:rgba(244,238,228,.70);
+  --cream-55:rgba(244,238,228,.55);
+  --cream-35:rgba(244,238,228,.35);
+  --cream-15:rgba(244,238,228,.15);
+  --cream-08:rgba(244,238,228,.08);
+  --hairline:rgba(244,238,228,.10);
+  --positive:#9DB87B; --negative:#C49B7B;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter Tight',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--onyx);
+  color:var(--cream);line-height:1.5;padding:48px 24px;-webkit-font-smoothing:antialiased}
+.container{max-width:1080px;margin:0 auto}
+
+.header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:48px;
+  padding-bottom:24px;border-bottom:1px solid var(--hairline)}
+.header-left h1{font-size:32px;font-weight:500;letter-spacing:-.03em}
+.eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--cream-35);margin-bottom:10px}
+.back-link{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--cream-55);text-decoration:none;border:1px solid var(--cream-15);border-radius:2px;
+  padding:9px 16px;transition:border-color .15s,color .15s;white-space:nowrap}
+.back-link:hover{color:var(--cream);border-color:var(--cream-35)}
+
+.section{margin-bottom:56px}
+.section-head{margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--hairline)}
+.section-head h2{font-size:19px;font-weight:500;letter-spacing:-.02em}
+.section-head p{font-size:13px;color:var(--cream-55);margin-top:6px;max-width:74ch}
+
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--hairline);
+  border:1px solid var(--hairline);border-radius:2px;overflow:hidden}
+.tile{background:var(--onyx);padding:18px 18px 20px}
+.tile-label{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--cream-35);margin-bottom:9px}
+.tile-value{font-size:24px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.tile-sub{font-size:11.5px;color:var(--cream-55);margin-top:5px;font-variant-numeric:tabular-nums}
+.positive{color:var(--positive)} .negative{color:var(--negative)}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.card{border:1px solid var(--hairline);border-radius:2px;padding:20px}
+.card-title{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--cream-55);margin-bottom:4px}
+.card-note{font-size:11.5px;color:var(--cream-35);margin-bottom:16px}
+
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--cream-35);text-align:right;padding:0 0 10px;font-weight:500;border-bottom:1px solid var(--hairline)}
+th:first-child{text-align:left}
+td{padding:9px 0;border-bottom:1px solid var(--cream-08);text-align:right;font-variant-numeric:tabular-nums}
+td:first-child{text-align:left}
+tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:rgba(244,238,228,.03)}
+.dim{color:var(--cream-35)}
+.mono{font-family:'JetBrains Mono',monospace;font-size:12px}
+
+.legend{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:14px;font-size:11.5px;color:var(--cream-55)}
+.legend span{display:flex;align-items:center;gap:7px}
+.swatch{width:10px;height:10px;border-radius:2px;flex:none}
+
+svg{display:block;width:100%;overflow:visible}
+.axis-label{font-family:'JetBrains Mono',monospace;font-size:9.5px;fill:var(--cream-35)}
+.bar-label{font-family:'JetBrains Mono',monospace;font-size:10px;fill:var(--cream-70)}
+.gridline{stroke:var(--cream-08);stroke-width:1}
+.zeroline{stroke:var(--cream-35);stroke-width:1}
+
+.flag{border-left:2px solid var(--negative);padding:14px 18px;background:rgba(196,155,123,.05);
+  border-radius:0 2px 2px 0;margin-bottom:12px}
+.flag.ok{border-left-color:var(--positive);background:rgba(157,184,123,.05)}
+.flag-title{font-size:13.5px;font-weight:600;margin-bottom:4px}
+.flag-body{font-size:12.5px;color:var(--cream-70);line-height:1.6}
+
+.loading,.error{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--cream-35);
+  padding:60px 0;text-align:center}
+.footer{margin-top:64px;padding-top:24px;border-top:1px solid var(--hairline);
+  font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--cream-35)}
+.middot{margin:0 8px;color:var(--cream-15)}
+
+@media(max-width:820px){
+  body{padding:32px 16px}
+  .grid2{grid-template-columns:1fr;gap:20px}
+  .header{flex-direction:column;align-items:flex-start;gap:16px}
+  .header-left h1{font-size:25px}
+  .table-scroll{overflow-x:auto}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="header-left">
+      <div class="eyebrow">Onyxquant · Trade Analytics</div>
+      <h1>Performance Breakdown</h1>
+    </div>
+    <a class="back-link" href="./index.html">← Live Dashboard</a>
+  </div>
+
+  <div id="loading" class="loading">Loading trade history</div>
+  <div id="error"></div>
+
+  <div id="main" style="display:none">
+
+    <div class="section">
+      <div class="tiles" id="kpis"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-head">
+        <h2>Volatility regime</h2>
+        <p>Win rate and expectancy for each ATR regime locked at entry. Expectancy — average net
+           P&amp;L per trade — is the figure that matters; a high win rate with negative expectancy
+           is a losing bucket. Ranges are 95% Wilson intervals, which stay honest at low trade counts.</p>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <div class="card-title">Win rate by regime</div>
+          <div class="card-note">Bars show the point estimate; the whisker is the 95% interval.</div>
+          <svg id="regimeWin" height="200"></svg>
+        </div>
+        <div class="card">
+          <div class="card-title">Expectancy by regime</div>
+          <div class="card-note">Net USD per trade. Bars below the zero line lose money.</div>
+          <svg id="regimeExp" height="200"></svg>
+        </div>
+      </div>
+      <div class="card" style="margin-top:20px">
+        <div class="table-scroll"><table id="regimeTable"></table></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head">
+        <h2>ATR at entry</h2>
+        <p>Trades bucketed by the ATR% observed on the entry bar. The distribution shows where the
+           strategy actually spends its time; the win-rate and expectancy charts show whether that
+           is where it should be. Buckets with fewer than 10 trades are marked — treat them as noise.</p>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <div class="card-title">Trade distribution</div>
+          <div class="card-note">Count of trades per ATR% bucket.</div>
+          <svg id="atrDist" height="200"></svg>
+        </div>
+        <div class="card">
+          <div class="card-title">Win rate by ATR% bucket</div>
+          <div class="card-note">Dashed line is the overall win rate.</div>
+          <svg id="atrWin" height="200"></svg>
+        </div>
+      </div>
+      <div class="card" style="margin-top:20px">
+        <div class="card-title">Expectancy by ATR% bucket</div>
+        <div class="card-note">Net USD per trade. This is where structurally unprofitable volatility bands show themselves.</div>
+        <svg id="atrExp" height="210"></svg>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head">
+        <h2>Hold duration</h2>
+        <p>How long winners and losers are held, with ±1σ and ±2σ spreads. A losing trade held
+           markedly longer than a winning one is the signature of an exit that is too slow to cut.</p>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <div class="card-title">Hold time — winners vs losers</div>
+          <div class="card-note">Dot is the mean; inner bar ±1σ, outer bar ±2σ (clipped at zero).</div>
+          <svg id="holdDist" height="180"></svg>
+        </div>
+        <div class="card">
+          <div class="card-title">Expectancy by hold-time quintile</div>
+          <div class="card-note">Net USD per trade. Edge usually dies in the longest bucket.</div>
+          <svg id="holdExp" height="180"></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head">
+        <h2>Edge decay</h2>
+        <p>The question this section answers is whether the edge is still there. A rolling win rate
+           drifting below the break-even line, or a second half materially worse than the first, is
+           the earliest signal you will get.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Rolling 30-trade win rate</div>
+        <div class="card-note">Dashed line is the all-time win rate. Sustained travel below it is the warning.</div>
+        <svg id="rollWin" height="200"></svg>
+      </div>
+      <div class="card" style="margin-top:20px">
+        <div class="card-title">Rolling 30-trade expectancy</div>
+        <div class="card-note">Net USD per trade. Crossing below zero and staying there is edge decay, not variance.</div>
+        <svg id="rollExp" height="200"></svg>
+      </div>
+      <div class="grid2" style="margin-top:20px">
+        <div class="card">
+          <div class="card-title">First half vs second half</div>
+          <div class="card-note">Split at the median trade. A large negative delta warrants investigation.</div>
+          <div class="table-scroll"><table id="halvesTable"></table></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Automated flags</div>
+          <div class="card-note">Heuristic checks across every bucket on this page.</div>
+          <div id="flags"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head">
+        <h2>Negative expectancy hunt</h2>
+        <p>Every slice of the book, ranked. The commission column is the one to watch: a bucket that
+           is gross-positive but net-negative is being eaten by costs, not by the market.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Entry type × regime</div>
+        <div class="card-note">Expectancy in net USD per trade. Cells are labelled with sign and count — never colour alone.</div>
+        <div class="table-scroll"><table id="gridTable"></table></div>
+      </div>
+      <div class="grid2" style="margin-top:20px">
+        <div class="card">
+          <div class="card-title">By exit type</div>
+          <div class="card-note">If signal exits are net-negative, the take-profit is carrying the strategy.</div>
+          <div class="table-scroll"><table id="exitTable"></table></div>
+        </div>
+        <div class="card">
+          <div class="card-title">By direction</div>
+          <div class="card-note">Shorts fight drift and carry borrow cost.</div>
+          <div class="table-scroll"><table id="dirTable"></table></div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:20px">
+        <div class="card-title">By session (ET)</div>
+        <div class="card-note">Pre-market, regular hours and after-hours have entirely different microstructure on 5-minute bars.</div>
+        <div class="table-scroll"><table id="sessionTable"></table></div>
+      </div>
+      <div class="card" style="margin-top:20px">
+        <div class="card-title">Commission drag</div>
+        <div class="card-note">Commissions as a share of gross profit, per bucket. Above 100% means the bucket only works before costs.</div>
+        <div class="table-scroll"><table id="dragTable"></table></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    Onyxquant <span class="middot">·</span> Est. 2026 <span class="middot">·</span> HMA 200strat8B
+  </div>
+</div>
+
+<script>
+const C = {
+  cream:'#F4EEE4', pos:'#9DB87B', neg:'#C49B7B', iris:'#AB96FF',
+  fill:'rgba(244,238,228,.28)', dim:'rgba(244,238,228,.35)'
+};
+
+/* ---------- formatting ---------- */
+const money = (n,d) => (n<0?'-':'') + '$' + Math.abs(n).toFixed(d==null?2:d);
+const signedMoney = (n,d) => (n>0?'+':n<0?'-':'') + '$' + Math.abs(n).toFixed(d==null?2:d);
+const pct = (n,d) => (n==null||isNaN(n)) ? '—' : n.toFixed(d==null?1:d) + '%';
+const cls = n => n>0 ? 'positive' : n<0 ? 'negative' : '';
+
+function fmtDur(sec){
+  if(sec==null||isNaN(sec)) return '—';
+  const h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60);
+  return h>0 ? h+'h '+String(m).padStart(2,'0')+'m' : m+'m';
+}
+
+/* Python timedelta strings: "1:04:59.155620", "2 days, 3:04:05" */
+function parseDur(s){
+  if(!s) return null;
+  let days=0, rest=String(s).trim();
+  const dm = rest.match(/^(-?\d+)\s+days?,\s*(.*)$/);
+  if(dm){ days=parseInt(dm[1],10); rest=dm[2]; }
+  const p = rest.split(':');
+  if(p.length<3) return null;
+  const h=parseFloat(p[0]), m=parseFloat(p[1]), sec=parseFloat(p[2]);
+  if([h,m,sec].some(isNaN)) return null;
+  return days*86400 + h*3600 + m*60 + sec;
+}
+
+/* ---------- stats ---------- */
+const sum = a => a.reduce((x,y)=>x+y,0);
+const mean = a => a.length ? sum(a)/a.length : null;
+function stdev(a){
+  if(a.length<2) return null;
+  const m=mean(a);
+  return Math.sqrt(sum(a.map(v=>(v-m)*(v-m)))/(a.length-1));
+}
+/* Wilson score interval — trustworthy at the small n these buckets produce,
+   unlike the normal approximation which can run past 0% or 100%. */
+function wilson(wins,n){
+  if(!n) return null;
+  const z=1.96, p=wins/n, d=1+z*z/n;
+  const c=(p + z*z/(2*n))/d;
+  const h=(z*Math.sqrt(p*(1-p)/n + z*z/(4*n*n)))/d;
+  return {lo:Math.max(0,(c-h)*100), hi:Math.min(1,(c+h))*100, p:p*100};
+}
+
+function agg(trades){
+  const pnls = trades.map(t=>t.net_pnl);
+  const wins = pnls.filter(p=>p>0), losses = pnls.filter(p=>p<=0);
+  const gw = sum(wins), gl = Math.abs(sum(losses));
+  const w = wilson(wins.length, trades.length);
+  return {
+    n: trades.length,
+    wins: wins.length,
+    winRate: trades.length ? wins.length/trades.length*100 : null,
+    ci: w,
+    total: sum(pnls),
+    exp: mean(pnls),
+    avgWin: mean(wins),
+    avgLoss: mean(losses),
+    pf: gl>0 ? gw/gl : null,
+    gross: sum(trades.map(t=>t.gross_pnl)),
+    comm: sum(trades.map(t=>t.commissions))
+  };
+}
+
+/* ---------- svg helpers ---------- */
+const NS='http://www.w3.org/2000/svg';
+function el(tag,attrs,text){
+  const e=document.createElementNS(NS,tag);
+  for(const k in attrs) e.setAttribute(k,attrs[k]);
+  if(text!=null) e.textContent=text;
+  return e;
+}
+function prep(svg,h){
+  svg.innerHTML='';
+  const w = svg.clientWidth || 480;
+  svg.setAttribute('viewBox',`0 0 ${w} ${h}`);
+  return w;
+}
+
+/* Categorical bar chart, one series -> one colour (never a value-ramp).
+   opts.signed uses the diverging pair AND a zero baseline AND signed labels,
+   so polarity never rests on hue alone. */
+function barChart(svg, rows, opts){
+  opts = opts||{};
+  const H = +svg.getAttribute('height') || 200;
+  const W = prep(svg,H);
+  if(!rows.length){ svg.appendChild(el('text',{x:8,y:H/2,class:'axis-label'},'No data')); return; }
+
+  const padL=opts.padL||44, padR=14, padT=14, padB=opts.padB||34;
+  const pw=W-padL-padR, ph=H-padT-padB;
+
+  const vals = rows.map(r=>r.value).filter(v=>v!=null&&!isNaN(v));
+  let vmin = Math.min(0,...vals), vmax = Math.max(0,...vals);
+  if(opts.max!=null) vmax = Math.max(vmax,opts.max);
+  if(vmax===vmin) vmax = vmin+1;
+  const pad=(vmax-vmin)*0.12; vmax+=pad; if(vmin<0) vmin-=pad;
+
+  const y = v => padT + ph - ((v-vmin)/(vmax-vmin))*ph;
+  const y0 = y(0);
+
+  // recessive gridlines
+  for(let i=0;i<=3;i++){
+    const gv = vmin + (vmax-vmin)*i/3;
+    svg.appendChild(el('line',{x1:padL,x2:W-padR,y1:y(gv),y2:y(gv),class:'gridline'}));
+    svg.appendChild(el('text',{x:padL-8,y:y(gv)+3.5,class:'axis-label','text-anchor':'end'},
+      opts.fmtAxis ? opts.fmtAxis(gv) : gv.toFixed(0)));
+  }
+
+  const slot = pw/rows.length, bw = Math.min(opts.maxBar||64, slot*0.62);
+  rows.forEach((r,i)=>{
+    const cx = padL + slot*i + slot/2;
+    if(r.value!=null && !isNaN(r.value)){
+      const yv = y(r.value);
+      const top = Math.min(yv,y0), hgt = Math.max(2,Math.abs(yv-y0));
+      const color = opts.signed ? (r.value>=0?C.pos:C.neg) : (opts.color||C.fill);
+      // 4px rounded data-end, anchored to the baseline
+      svg.appendChild(el('rect',{x:cx-bw/2,y:top,width:bw,height:hgt,fill:color,rx:3}));
+      svg.appendChild(el('text',{x:cx,y:(r.value>=0?top-6:top+hgt+13),class:'bar-label','text-anchor':'middle'},
+        opts.fmtLabel ? opts.fmtLabel(r.value) : r.value.toFixed(0)));
+    }
+    // 95% interval whisker
+    if(r.ci){
+      const yl=y(r.ci.lo), yh=y(r.ci.hi);
+      svg.appendChild(el('line',{x1:cx,x2:cx,y1:yl,y2:yh,stroke:C.dim,'stroke-width':1}));
+      svg.appendChild(el('line',{x1:cx-4,x2:cx+4,y1:yl,y2:yl,stroke:C.dim,'stroke-width':1}));
+      svg.appendChild(el('line',{x1:cx-4,x2:cx+4,y1:yh,y2:yh,stroke:C.dim,'stroke-width':1}));
+    }
+    const lbl = el('text',{x:cx,y:H-padB+16,class:'axis-label','text-anchor':'middle'},r.label);
+    svg.appendChild(lbl);
+    if(r.sub) svg.appendChild(el('text',{x:cx,y:H-padB+28,class:'axis-label','text-anchor':'middle'},r.sub));
+  });
+
+  if(vmin<0) svg.appendChild(el('line',{x1:padL,x2:W-padR,y1:y0,y2:y0,class:'zeroline'}));
+  if(opts.ref!=null){
+    svg.appendChild(el('line',{x1:padL,x2:W-padR,y1:y(opts.ref),y2:y(opts.ref),
+      stroke:C.iris,'stroke-width':1,'stroke-dasharray':'4 3'}));
+  }
+}
+
+/* Line chart for rolling series. One series -> no legend box needed. */
+function lineChart(svg, pts, opts){
+  opts=opts||{};
+  const H=+svg.getAttribute('height')||200;
+  const W=prep(svg,H);
+  if(pts.length<2){ svg.appendChild(el('text',{x:8,y:H/2,class:'axis-label'},'Not enough trades yet')); return; }
+
+  const padL=48,padR=14,padT=14,padB=28;
+  const pw=W-padL-padR, ph=H-padT-padB;
+  const vals=pts.map(p=>p.v);
+  let vmin=Math.min(...vals), vmax=Math.max(...vals);
+  if(opts.include0){ vmin=Math.min(vmin,0); vmax=Math.max(vmax,0); }
+  if(opts.ref!=null){ vmin=Math.min(vmin,opts.ref); vmax=Math.max(vmax,opts.ref); }
+  if(vmax===vmin){vmax=vmin+1}
+  const pd=(vmax-vmin)*0.12; vmin-=pd; vmax+=pd;
+
+  const x=i=>padL+pw*i/(pts.length-1);
+  const y=v=>padT+ph-((v-vmin)/(vmax-vmin))*ph;
+
+  for(let i=0;i<=3;i++){
+    const gv=vmin+(vmax-vmin)*i/3;
+    svg.appendChild(el('line',{x1:padL,x2:W-padR,y1:y(gv),y2:y(gv),class:'gridline'}));
+    svg.appendChild(el('text',{x:padL-8,y:y(gv)+3.5,class:'axis-label','text-anchor':'end'},
+      opts.fmtAxis?opts.fmtAxis(gv):gv.toFixed(0)));
+  }
+  if(vmin<0&&vmax>0) svg.appendChild(el('line',{x1:padL,x2:W-padR,y1:y(0),y2:y(0),class:'zeroline'}));
+  if(opts.ref!=null){
+    svg.appendChild(el('line',{x1:padL,x2:W-padR,y1:y(opts.ref),y2:y(opts.ref),
+      stroke:C.iris,'stroke-width':1,'stroke-dasharray':'4 3'}));
+  }
+
+  const d=pts.map((p,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(p.v).toFixed(1)).join(' ');
+  svg.appendChild(el('path',{d,fill:'none',stroke:C.cream,'stroke-width':2,
+    'stroke-linejoin':'round','stroke-linecap':'round'}));
+
+  const step=Math.max(1,Math.floor(pts.length/6));
+  for(let i=0;i<pts.length;i+=step){
+    svg.appendChild(el('text',{x:x(i),y:H-padB+16,class:'axis-label','text-anchor':'middle'},pts[i].label));
+  }
+}
+
+/* ---------- table helper ---------- */
+function table(node, cols, rows){
+  const head='<thead><tr>'+cols.map(c=>'<th>'+c+'</th>').join('')+'</tr></thead>';
+  const body='<tbody>'+rows.map(r=>'<tr>'+r.map(c=>'<td>'+c+'</td>').join('')+'</tr>').join('')+'</tbody>';
+  node.innerHTML=head+body;
+}
+const cell = (n,fmt) => '<span class="'+cls(n)+'">'+fmt(n)+'</span>';
+
+/* ---------- buckets ---------- */
+function quantileBuckets(trades, key, count, fmt){
+  const vals = trades.map(t=>t[key]).filter(v=>v!=null&&!isNaN(v)).sort((a,b)=>a-b);
+  if(vals.length<count) return [];
+  const edges=[];
+  for(let i=1;i<count;i++) edges.push(vals[Math.floor(vals.length*i/count)]);
+  const buckets = Array.from({length:count},()=>[]);
+  trades.forEach(t=>{
+    const v=t[key];
+    if(v==null||isNaN(v)) return;
+    let bi=0; while(bi<edges.length && v>=edges[bi]) bi++;
+    buckets[bi].push(t);
+  });
+  return buckets.map((b,i)=>{
+    const lo = i===0 ? vals[0] : edges[i-1];
+    const hi = i===count-1 ? vals[vals.length-1] : edges[i];
+    return {label: fmt(lo)+'–'+fmt(hi), trades:b};
+  }).filter(b=>b.trades.length);
+}
+
+function session(t){
+  const h = parseInt(String(t.entry_time||'').slice(0,2),10);
+  if(isNaN(h)) return 'Unknown';
+  if(h<9) return 'Pre-market';
+  if(h<12) return 'Open (09–12)';
+  if(h<16) return 'Midday (12–16)';
+  return 'After-hours';
+}
+
+/* ---------- render ---------- */
+function render(data){
+  const trades = (data.trades||[]).filter(t=>t && t.net_pnl!=null);
+  if(!trades.length){
+    document.getElementById('loading').style.display='none';
+    document.getElementById('error').innerHTML='<div class="error">No completed trades in the log yet.</div>';
+    return;
+  }
+  trades.forEach(t=>{ t._dur = parseDur(t.hold_duration); });
+
+  const all = agg(trades);
+  const st = data.stats||{};
+  const cur = data.currency||'USD';
+
+  /* KPI tiles */
+  document.getElementById('kpis').innerHTML = [
+    ['Trades', all.n, ''],
+    ['Net P&L', '<span class="'+cls(all.total)+'">'+signedMoney(all.total)+'</span>', 'USD, after commissions'],
+    ['Expectancy', '<span class="'+cls(all.exp)+'">'+signedMoney(all.exp)+'</span>', 'per trade'],
+    ['Win Rate', pct(all.winRate), all.wins+' W / '+(all.n-all.wins)+' L'],
+    ['Profit Factor', all.pf?all.pf.toFixed(2):'—', 'gross win ÷ gross loss'],
+    ['Max Drawdown', '<span class="negative">'+money(st.max_drawdown!=null?st.max_drawdown:0)+'</span>',
+      st.max_drawdown_pct!=null ? pct(st.max_drawdown_pct)+' of peak equity' : ''],
+    ['Return', st.pnl_as_pct_equity!=null?'<span class="'+cls(st.pnl_as_pct_equity)+'">'+pct(st.pnl_as_pct_equity)+'</span>':'—',
+      st.starting_equity?('on '+money(st.starting_equity,0)+' '+cur+' start'):''],
+    ['Commissions', money(all.comm), (all.gross>0?pct(all.comm/all.gross*100,0)+' of gross profit':'')]
+  ].map(([l,v,s])=>'<div class="tile"><div class="tile-label">'+l+'</div>'+
+      '<div class="tile-value">'+v+'</div>'+(s?'<div class="tile-sub">'+s+'</div>':'')+'</div>').join('');
+
+  /* Regime */
+  const regimes = ['low','mid','high'];
+  const regAgg = regimes.map(r=>({r, a:agg(trades.filter(t=>t.regime===r))})).filter(x=>x.a.n);
+  barChart(document.getElementById('regimeWin'),
+    regAgg.map(x=>({label:x.r, sub:'n='+x.a.n, value:x.a.winRate, ci:x.a.ci})),
+    {max:100, ref:all.winRate, fmtAxis:v=>v.toFixed(0)+'%', fmtLabel:v=>v.toFixed(1)+'%', color:C.fill});
+  barChart(document.getElementById('regimeExp'),
+    regAgg.map(x=>({label:x.r, sub:'n='+x.a.n, value:x.a.exp})),
+    {signed:true, fmtAxis:v=>'$'+v.toFixed(0), fmtLabel:v=>signedMoney(v,2)});
+  table(document.getElementById('regimeTable'),
+    ['Regime','Trades','Win %','95% CI','Expectancy','Total P&L','Avg Win','Avg Loss','PF'],
+    regAgg.map(x=>[x.r, x.a.n, pct(x.a.winRate),
+      '<span class="dim mono">'+x.a.ci.lo.toFixed(0)+'–'+x.a.ci.hi.toFixed(0)+'%</span>',
+      cell(x.a.exp,signedMoney), cell(x.a.total,signedMoney),
+      x.a.avgWin!=null?money(x.a.avgWin):'—', x.a.avgLoss!=null?money(x.a.avgLoss):'—',
+      x.a.pf?x.a.pf.toFixed(2):'—']));
+
+  /* ATR buckets */
+  const atrB = quantileBuckets(trades,'atr_at_entry_pct',6,v=>v.toFixed(2));
+  const atrAgg = atrB.map(b=>({label:b.label, a:agg(b.trades)}));
+  barChart(document.getElementById('atrDist'),
+    atrAgg.map(x=>({label:x.label, value:x.a.n})),
+    {fmtAxis:v=>v.toFixed(0), fmtLabel:v=>v.toFixed(0), color:C.fill, padB:38});
+  barChart(document.getElementById('atrWin'),
+    atrAgg.map(x=>({label:x.label, sub:'n='+x.a.n, value:x.a.winRate})),
+    {max:100, ref:all.winRate, fmtAxis:v=>v.toFixed(0)+'%', fmtLabel:v=>v.toFixed(0)+'%', color:C.fill, padB:38});
+  barChart(document.getElementById('atrExp'),
+    atrAgg.map(x=>({label:x.label, sub:'n='+x.a.n, value:x.a.exp})),
+    {signed:true, fmtAxis:v=>'$'+v.toFixed(0), fmtLabel:v=>signedMoney(v,2), padB:38});
+
+  /* Hold duration */
+  const wDur = trades.filter(t=>t.net_pnl>0 && t._dur!=null).map(t=>t._dur);
+  const lDur = trades.filter(t=>t.net_pnl<=0 && t._dur!=null).map(t=>t._dur);
+  drawHold(document.getElementById('holdDist'), [
+    {label:'Winners', m:mean(wDur), sd:stdev(wDur), n:wDur.length},
+    {label:'Losers',  m:mean(lDur), sd:stdev(lDur), n:lDur.length}
+  ]);
+  const durB = quantileBuckets(trades,'_dur',5,v=>fmtDur(v));
+  barChart(document.getElementById('holdExp'),
+    durB.map(b=>({label:b.label, sub:'n='+b.trades.length, value:agg(b.trades).exp})),
+    {signed:true, fmtAxis:v=>'$'+v.toFixed(0), fmtLabel:v=>signedMoney(v,1), padB:38});
+
+  /* Edge decay */
+  const W=30;
+  const rollW=[], rollE=[];
+  for(let i=W-1;i<trades.length;i++){
+    const win=trades.slice(i-W+1,i+1);
+    const a=agg(win);
+    rollW.push({label:'#'+(i+1), v:a.winRate});
+    rollE.push({label:'#'+(i+1), v:a.exp});
+  }
+  lineChart(document.getElementById('rollWin'), rollW, {ref:all.winRate, fmtAxis:v=>v.toFixed(0)+'%'});
+  lineChart(document.getElementById('rollExp'), rollE, {include0:true, ref:0, fmtAxis:v=>'$'+v.toFixed(0)});
+
+  const mid=Math.floor(trades.length/2);
+  const h1=agg(trades.slice(0,mid)), h2=agg(trades.slice(mid));
+  table(document.getElementById('halvesTable'),
+    ['Metric','First half','Second half','Δ'],
+    [['Trades',h1.n,h2.n,''],
+     ['Win rate',pct(h1.winRate),pct(h2.winRate),cell(h2.winRate-h1.winRate,v=>(v>0?'+':'')+v.toFixed(1)+' pp')],
+     ['Expectancy',signedMoney(h1.exp),signedMoney(h2.exp),cell(h2.exp-h1.exp,v=>signedMoney(v))],
+     ['Profit factor',h1.pf?h1.pf.toFixed(2):'—',h2.pf?h2.pf.toFixed(2):'—',
+       (h1.pf&&h2.pf)?cell(h2.pf-h1.pf,v=>(v>0?'+':'')+v.toFixed(2)):''],
+     ['Net P&L',signedMoney(h1.total),signedMoney(h2.total),cell(h2.total-h1.total,v=>signedMoney(v))]]);
+
+  /* Entry type x regime grid */
+  const types=[...new Set(trades.map(t=>t.entry_type).filter(Boolean))].sort();
+  table(document.getElementById('gridTable'),
+    ['Entry type'].concat(regimes.map(r=>r[0].toUpperCase()+r.slice(1))).concat(['All']),
+    types.map(ty=>{
+      const row=[ty];
+      regimes.forEach(r=>{
+        const a=agg(trades.filter(t=>t.entry_type===ty&&t.regime===r));
+        row.push(a.n ? cell(a.exp,v=>signedMoney(v,2))+' <span class="dim mono">n='+a.n+'</span>' : '<span class="dim">—</span>');
+      });
+      const a=agg(trades.filter(t=>t.entry_type===ty));
+      row.push(cell(a.exp,v=>signedMoney(v,2))+' <span class="dim mono">n='+a.n+'</span>');
+      return row;
+    }));
+
+  /* Exit type / direction / session */
+  const byKey=(fn)=>{
+    const keys=[...new Set(trades.map(fn).filter(Boolean))];
+    return keys.map(k=>({k, a:agg(trades.filter(t=>fn(t)===k))})).sort((x,y)=>y.a.exp-x.a.exp);
+  };
+  const perfRows = list => list.map(x=>[x.k, x.a.n, pct(x.a.winRate),
+    cell(x.a.exp,v=>signedMoney(v,2)), cell(x.a.total,signedMoney), x.a.pf?x.a.pf.toFixed(2):'—']);
+  const perfCols = ['Bucket','Trades','Win %','Expectancy','Total P&L','PF'];
+
+  table(document.getElementById('exitTable'), perfCols, perfRows(byKey(t=>t.exit_type)));
+  table(document.getElementById('dirTable'), perfCols, perfRows(byKey(t=>t.direction)));
+  table(document.getElementById('sessionTable'), perfCols, perfRows(byKey(session)));
+
+  /* Commission drag */
+  const dragBuckets = regimes.map(r=>({k:'Regime '+r, a:agg(trades.filter(t=>t.regime===r))}))
+    .concat(byKey(t=>t.exit_type).map(x=>({k:'Exit '+x.k, a:x.a})))
+    .concat(byKey(t=>t.direction).map(x=>({k:x.k, a:x.a})))
+    .filter(x=>x.a.n);
+  table(document.getElementById('dragTable'),
+    ['Bucket','Trades','Gross P&L','Commissions','Net P&L','Drag'],
+    dragBuckets.map(x=>{
+      const drag = x.a.gross>0 ? x.a.comm/x.a.gross*100 : null;
+      const flip = x.a.gross>0 && x.a.total<=0;
+      return [x.k, x.a.n, cell(x.a.gross,signedMoney), money(x.a.comm),
+        cell(x.a.total,signedMoney),
+        drag==null ? '<span class="dim">—</span>'
+          : '<span class="'+(flip?'negative':'')+'">'+pct(drag,0)+(flip?' ⚠':'')+'</span>'];
+    }));
+
+  /* Flags */
+  const flags=[];
+  regAgg.forEach(x=>{ if(x.a.exp<0 && x.a.n>=20)
+    flags.push(['Regime "'+x.r+'" has negative expectancy',
+      x.a.n+' trades, '+signedMoney(x.a.exp)+' per trade, '+pct(x.a.winRate)+' win rate. This bucket loses money net of costs.']); });
+  atrAgg.forEach(x=>{ if(x.a.exp<0 && x.a.n>=15)
+    flags.push(['ATR bucket '+x.label+' is unprofitable',
+      x.a.n+' trades at '+signedMoney(x.a.exp)+' per trade.']); });
+  byKey(t=>t.exit_type).forEach(x=>{ if(x.a.exp<0 && x.a.n>=15)
+    flags.push([x.k+' exits have negative expectancy',
+      x.a.n+' trades at '+signedMoney(x.a.exp)+' per trade.']); });
+  byKey(t=>t.direction).forEach(x=>{ if(x.a.exp<0 && x.a.n>=15)
+    flags.push([x.k+' trades have negative expectancy',
+      x.a.n+' trades at '+signedMoney(x.a.exp)+' per trade.']); });
+  if(h2.exp < h1.exp && h1.exp>0 && h2.exp<=0)
+    flags.push(['Expectancy has turned negative in the second half',
+      'First half '+signedMoney(h1.exp)+' per trade, second half '+signedMoney(h2.exp)+'. Treat as possible edge decay.']);
+  if(all.gross>0 && all.comm/all.gross > 0.5)
+    flags.push(['Commissions consume '+pct(all.comm/all.gross*100,0)+' of gross profit',
+      'At this trade frequency, execution cost is the dominant term. Any drop in gross edge turns the book negative.']);
+  dragBuckets.forEach(x=>{ if(x.a.gross>0 && x.a.total<=0 && x.a.n>=15)
+    flags.push([x.k+' is profitable before costs and losing after',
+      'Gross '+signedMoney(x.a.gross)+', commissions '+money(x.a.comm)+', net '+signedMoney(x.a.total)+'.']); });
+
+  document.getElementById('flags').innerHTML = flags.length
+    ? flags.map(([t,b])=>'<div class="flag"><div class="flag-title">'+t+'</div><div class="flag-body">'+b+'</div></div>').join('')
+    : '<div class="flag ok"><div class="flag-title">No buckets flagged</div>'+
+      '<div class="flag-body">No slice with a meaningful sample shows negative expectancy, and second-half performance has not deteriorated.</div></div>';
+
+  document.getElementById('loading').style.display='none';
+  document.getElementById('main').style.display='block';
+}
+
+/* Mean ± 1σ / 2σ for winners vs losers */
+function drawHold(svg, rows){
+  const H=+svg.getAttribute('height')||180;
+  const W=prep(svg,H);
+  const valid=rows.filter(r=>r.m!=null);
+  if(!valid.length){ svg.appendChild(el('text',{x:8,y:H/2,class:'axis-label'},'No data')); return; }
+
+  const padL=76,padR=20,padT=26,padB=30;
+  const pw=W-padL-padR;
+  const hi=Math.max(...valid.map(r=>r.m+2*(r.sd||0)))*1.08 || 1;
+  const x=v=>padL+Math.max(0,Math.min(v,hi))/hi*pw;
+
+  for(let i=0;i<=3;i++){
+    const gv=hi*i/3;
+    svg.appendChild(el('line',{x1:x(gv),x2:x(gv),y1:padT-8,y2:H-padB,class:'gridline'}));
+    svg.appendChild(el('text',{x:x(gv),y:H-padB+16,class:'axis-label','text-anchor':'middle'},fmtDur(gv)));
+  }
+
+  const lane=(H-padT-padB)/valid.length;
+  valid.forEach((r,i)=>{
+    const cy=padT+lane*i+lane/2;
+    const sd=r.sd||0;
+    const color = r.label==='Winners' ? C.pos : C.neg;
+    svg.appendChild(el('text',{x:padL-12,y:cy+4,class:'bar-label','text-anchor':'end'},r.label));
+    // ±2σ outer, ±1σ inner, then the mean dot on top with a surface ring
+    svg.appendChild(el('line',{x1:x(Math.max(0,r.m-2*sd)),x2:x(r.m+2*sd),y1:cy,y2:cy,
+      stroke:color,'stroke-width':2,opacity:.30,'stroke-linecap':'round'}));
+    svg.appendChild(el('line',{x1:x(Math.max(0,r.m-sd)),x2:x(r.m+sd),y1:cy,y2:cy,
+      stroke:color,'stroke-width':8,opacity:.55,'stroke-linecap':'round'}));
+    svg.appendChild(el('circle',{cx:x(r.m),cy,r:5,fill:color,stroke:'#15110D','stroke-width':2}));
+    svg.appendChild(el('text',{x:x(r.m),y:cy-14,class:'bar-label','text-anchor':'middle'},
+      fmtDur(r.m)+'  (n='+r.n+')'));
+  });
+}
+
+/* ---------- boot ---------- */
+async function load(){
+  try{
+    const res = await fetch('./dashboard_data.json?t='+Date.now());
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const data = await res.json();
+    if(!data.trades){
+      document.getElementById('loading').style.display='none';
+      document.getElementById('error').innerHTML =
+        '<div class="error">This dashboard_data.json predates the analytics build — it carries no full trade history.<br>'+
+        'Promote dashboard_proposed.py so the bot publishes the <code>trades</code> array.</div>';
+      return;
+    }
+    render(data);
+  }catch(e){
+    console.error(e);
+    document.getElementById('loading').style.display='none';
+    document.getElementById('error').innerHTML='<div class="error">Unable to load trade data.</div>';
+  }
+}
+load();
+window.addEventListener('resize', ()=>{ clearTimeout(window._rz); window._rz=setTimeout(load,250); });
+</script>
+</body>
+</html>
