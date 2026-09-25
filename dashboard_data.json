@@ -1,22 +1,43 @@
 {
-  "last_updated": "2026-09-25T04:01:08.881539",
+  "last_updated": "2026-09-25T04:25:03.827123",
   "strategy_version": "V9F",
-  "net_liquidation": 10582.02,
+  "net_liquidation": 10602.8,
   "currency": "CAD",
-  "fx_usd_to_base": 1.4143999859154928,
+  "fx_usd_to_base": 1.414440061047601,
   "pnl_currency": "USD",
   "current_position": {
-    "has_position": true,
-    "direction": "LONG",
-    "entry_type": "long2",
-    "entry_price": 224.06,
-    "entry_time": "2026-09-24T18:50:03.452232-04:00",
-    "position_size": 33,
-    "entry_regime": "low",
-    "entry_target": 0.946,
-    "entry_atr_pct": 0.060700736442758925
+    "has_position": false,
+    "direction": null,
+    "entry_type": null,
+    "entry_price": null,
+    "entry_time": null,
+    "position_size": 0,
+    "entry_regime": null,
+    "entry_target": null,
+    "entry_atr_pct": null
   },
   "recent_trades": [
+    {
+      "trade_id": 342,
+      "symbol": "NVDA",
+      "direction": "LONG",
+      "entry_type": "long2",
+      "exit_type": "TP",
+      "entry_date": "2026-09-24",
+      "entry_time": "18:50:03",
+      "exit_date": "2026-09-25",
+      "exit_time": "04:25:03",
+      "entry_price": 224.06,
+      "exit_price": 225.71,
+      "quantity": 33,
+      "gross_pnl": 54.45,
+      "commissions": 2.1601,
+      "net_pnl": 52.2899,
+      "hold_duration": "9:35:00.359025",
+      "regime": "low",
+      "target_used_pct": 0.946,
+      "atr_at_entry_pct": 0.060701
+    },
     {
       "trade_id": 341,
       "symbol": "NVDA",
@@ -100,27 +121,6 @@
       "regime": "mid",
       "target_used_pct": 0.394,
       "atr_at_entry_pct": 0.202156
-    },
-    {
-      "trade_id": 337,
-      "symbol": "NVDA",
-      "direction": "SHORT",
-      "entry_type": "short2",
-      "exit_type": "Signal",
-      "entry_date": "2026-09-24",
-      "entry_time": "08:50:09",
-      "exit_date": "2026-09-24",
-      "exit_time": "09:25:03",
-      "entry_price": 223.0,
-      "exit_price": 222.57,
-      "quantity": 33,
-      "gross_pnl": 14.19,
-      "commissions": 2.1582,
-      "net_pnl": 12.0318,
-      "hold_duration": "0:34:53.780560",
-      "regime": "mid",
-      "target_used_pct": 0.394,
-      "atr_at_entry_pct": 0.147949
     }
   ],
   "trades": [
@@ -7284,30 +7284,51 @@
       "regime": "low",
       "target_used_pct": 0.946,
       "atr_at_entry_pct": 0.07771
+    },
+    {
+      "trade_id": 342,
+      "symbol": "NVDA",
+      "direction": "LONG",
+      "entry_type": "long2",
+      "exit_type": "TP",
+      "entry_date": "2026-09-24",
+      "entry_time": "18:50:03",
+      "exit_date": "2026-09-25",
+      "exit_time": "04:25:03",
+      "entry_price": 224.06,
+      "exit_price": 225.71,
+      "quantity": 33,
+      "gross_pnl": 54.45,
+      "commissions": 2.1601,
+      "net_pnl": 52.2899,
+      "hold_duration": "9:35:00.359025",
+      "regime": "low",
+      "target_used_pct": 0.946,
+      "atr_at_entry_pct": 0.060701
     }
   ],
   "stats": {
-    "total_trades": 341,
-    "wins": 199,
+    "total_trades": 342,
+    "wins": 200,
     "losses": 142,
-    "win_rate": 58.35777126099707,
-    "total_net_pnl": 422.07869999999997,
-    "avg_win": 25.136056281407036,
+    "win_rate": 58.47953216374269,
+    "total_net_pnl": 474.36859999999996,
+    "avg_win": 25.2718255,
     "avg_loss": -32.25349647887324,
-    "profit_factor": 1.0921569918230287,
-    "pnl_as_pct_equity": 5.978830250645372,
-    "starting_equity": 9985.03,
+    "profit_factor": 1.103574009281448,
+    "pnl_as_pct_equity": 6.755710458606686,
+    "starting_equity": 9931.83,
     "best_trade": 200.1474,
     "worst_trade": -341.3713,
     "max_drawdown": -563.7377999999999,
-    "max_drawdown_pct": -7.680618567780363,
-    "sharpe_ratio": 0.8354556664316504,
+    "max_drawdown_pct": -7.7207171007699,
+    "sharpe_ratio": 0.924344667082073,
     "regime_breakdown": {
       "low": {
-        "trades": 143,
-        "wins": 81,
-        "win_rate": 56.64335664335665,
-        "total_pnl": 981.4122
+        "trades": 144,
+        "wins": 82,
+        "win_rate": 56.94444444444444,
+        "total_pnl": 1033.7021
       },
       "mid": {
         "trades": 121,
@@ -9033,6 +9054,11 @@
       "trade_id": 341,
       "exit_date": "2026-09-24",
       "cumulative_pnl": 422.08
+    },
+    {
+      "trade_id": 342,
+      "exit_date": "2026-09-25",
+      "cumulative_pnl": 474.37
     }
   ]
 }
